@@ -65,30 +65,30 @@ INSERT INTO ExhibitionArtworks (ExhibitionID, ArtworkID) VALUES
 --1.Retrieve the names of all artists along with the number of artworks they have in the gallery, and
 list them in descending order of the number of artworks.
 
-select Artistname,count(ArtistID) as TotalArt from Artists left join Artist on Artists.ArtistId =Artwork.ArtistID
-group by Artists.Artistname, Artwork.ArtistID
+select Artists.name,count(Artworks.ArtistID) as TotalArt from Artists left join Artworks on Artists.ArtistId =Artworks.ArtistID
+group by Artists.name, Artists.ArtistID
 order by TotalArt desc;
 
 --2 List the titles of artworks created by artists from 'Spanish' and 'Dutch' nationalities, and order
 them by the year in ascending order
 
-select Artwork.title,Artist.Nationality, Artwork.year from Artists inner join Artworks on 
+select Artworks.title,Artists.Nationality, Artworks.year from Artists inner join Artworks on 
 Artworks.ArtistID = Artists.ArtistID
-where Artists.Nationality in ('Spanishi,'Duct')
-order by Artwork.Year Asc
+where Artists.Nationality in ('Spanish','Dutch')
+order by Artworks.Year Asc
 
 3.Find the names of all artists who have artworks in the 'Painting' category, and the number of
 artworks they have in this category.
 
 select Artists.Name ,COUNT(Artworks.ArtworkID) as TotalNum from Artists inner join Artworks 
 on Artists.ArtistID = Artworks.ArtistID
-and inner join categories on Artwork.CategoriesID= categories.categoriesID
-group by ArtistID,ArtistNmae;
+inner join categories on Artworks.CategoryID= Categories.CategoryID
+group by Artists.ArtistID,Artists.Name;
 
 4.. List the names of artworks from the 'Modern Art Masterpieces' exhibition, along with their
 artists and categories.
 
-select Artwork.title, Artist.Name as ArtistNmae, Categories.Name as CategoriesName from ExibitionArtwork 
+select Artworks.title, Artists.Name as ArtistNmae, Categories.Name as CategoriesName from ExhibitionArtworks
 inner join Exhibitions on ExhibitionArtworks.ExhibitionID = Exhibitions.ExhibitionID
 inner join Artworks on ExhibitionArtworks.ArtworkID = Artworks.ArtworkID
 inner join Artists on Artworks.ArtistID = Artists.ArtistID
@@ -97,9 +97,9 @@ where Exhibitions.title = 'Modern Art Masterpieces';
 
 5. Find the artists who have more than two artworks in the gallery.
 
-select Artistname,count(Artwork.ArtistID) as TotalArt from Artists inner join Artist on Artists.ArtistId =Artwork.ArtistID
-group by Artists.Artistname, Artwork.ArtistID
-having count(Artwork.ArtworkID) > 2;
+select Artists.Name,count(Artworks.ArtistID) as TotalArt from Artists inner join Artworks on Artists.ArtistId =Artwork.ArtistID
+group by Artists.Name, Artworks.ArtistID
+having count(Artworks.ArtworkID) > 2;
 
 6.Find the titles of artworks that were exhibited in both 'Modern Art Masterpieces' and
 'Renaissance Art' exhibitions 
@@ -113,22 +113,23 @@ where E1.Title = 'Modern Art Masterpieces'and E2.Title = 'Renaissance Art';
 
 7. Find the total number of artworks in each category
 
-select count(Artwork.ArtworID) as Totalno , categories.name from Artworks left join Categoreies 
-on Catagories.catagoriesID = Artwork.CatogoriesID
-group by Catogories.name;
+select count(Artworks.ArtworkID) as Totalno , Categories.Name from Artworks left join Categories 
+on Categories.CategoryID = Artworks.CategoryID
+group by Categories.Name;
 
 8.List artists who have more than 3 artworks in the gallery
 
-select Artists.name, cout(Artwork.ArtworkID) from Artists inner join Artwork 
-on Atrist.ArtistID= Artwork.ArtistID
-group by Artist.name,Artist.ArtistID
-having count(Artwork.ArtistID) > 3;
+
+select Artists.Name, count(Artworks.ArtworkID) from Artists inner join Artworks 
+on Artists.ArtistID= Artworks.ArtistID
+group by Artists.Name,Artists.ArtistID
+having count(Artworks.ArtistID) > 3;
 
 9.Find the artworks created by artists from a specific nationality (e.g., Spanish)
 
-select Atrist.name , Artist.nationalisty , Artwork.title from Artists inner join Artwork 
-on Arttist.ArtistID = Artwork.ArtistID
-where Artist.nationality = 'Spanish'
+select Artists.Name , Artists.nationality , Artworks.title from Artists inner join Artworks 
+on Artists.ArtistID = Artworks.ArtistID
+where Artists.nationality = 'Spanish'
 
 10. List exhibitions that feature artwork by both Vincent van Gogh and Leonardo da Vinci
 
@@ -143,44 +144,46 @@ having count(distint AR.Name) = 2;
 
 11. Find all the artworks that have not been included in any exhibition
 
-select Artwork.ArtworkID from Artwork left join Exibition on Artwork.ArtID = Exibition.ArtID
-where ExibitionID = null;
+select Artworks.ArtworkID from Artworks left join ExhibitionArtworks on Artworks.ArtworkID = ExhibitionArtworks.ArtworkID
+where ExhibitionArtworks.ExhibitionID = null;
 
 12. List artists who have created artworks in all available categories 
 
-select Atrist.name from Artists inner join Artwork on  Artist.ArtistID = Artwork.ArtistID
-inner join Catagories on Artwork.CatagoriesID= Catogories.CatagoriesID
-where categories.name in ('painting', 'sculpture','phoyography');
-group by ArtistID, Artist.name
-having count(distinct.catogories.name) = 3;
+
+select Artists.Name from Artists inner join Artworks on  Artists.ArtistID = Artworks.ArtistID
+inner join Categories on Artworks.CategoryID= Categories.CategoryID
+where categories.name in ('painting', 'sculpture','phoyography')
+group by Artists.ArtistID, Artists.Name
+having count(DISTINCT Categories.Name) = 3;
 
 13. List the total number of artworks in each category
 
-select categories.name, count(Artwork.ArtworkID) from Artwork inner join categories 
-on Artwork.CatagoriesID= catagories.CatagoriesID
-group by catgories.name,catagories.catagoriesId;
+
+select categories.name, count(Artworks.ArtworkID) from Artworks inner join categories 
+on Artworks.CategoryID= Categories.CategoryID
+group by categories.Name,categories.CategoryId;
  
 14.Find the artists who have more than 2 artworks in the gallery
 
-select Artist.name, count(Artwork.artwokID) from artists inner join Artwork 
-on Artist.ArtistID= Artwork.Artistid
-group by Artist.name, Artist.ArtistID
-having count(Artwork.artwokID) > 2;
+select Artists.Name, count(Artworks.ArtworkID) from artists inner join Artworks
+on Artists.ArtistID= Artworks.Artistid
+group by Artists.Name, Artists.ArtistID
+having count(Artworks.ArtworkID) > 2;
 
 15. List the categories with the average year of artworks they contain, only for categories with more
 than 1 artwork
 
-select categories.name , avg(Artwork.year) from categories inner join Artwork 
-on Categories.CategoriesID= Artwork.CategoriesID
-group Categories.name, categories.categoriesID
-having avg(Artwork.ArtworkID) >1;
+select categories.name , avg(Artworks.year) from categories inner join Artworks
+on Categories.CategoryID= Artworks.CategoryID
+group by Categories.Name, categories.CategoryID
+having avg(Artworks.ArtworkID) >1;
 
 16.Find the artworks that were exhibited in the 'Modern Art Masterpieces' exhibition
 --not artworkid in exibition table so inner joing ExhibitionArtworks first and then join with exibition table
 
-select Artwork.title from Artwork inner join ExhibitionArtworks on ExhibitionArtworks.ArtworkID = Artwork.ArtworkID
-inner join Exibition on Exibition.ExibitionID =  ExhibitionArtworks.  ExibitionID
-where Artwork.title='Modern Art Masterpieces';
+select Artworks.title from Artworks inner join ExhibitionArtworks on ExhibitionArtworks.ArtworkID = Artworks.ArtworkID
+inner join Exhibitions on Exhibitions.ExhibitionID =  ExhibitionArtworks.ExhibitionID
+where Exhibitions.title='Modern Art Masterpieces';
 
 17. Find the categories where the average year of artworks is greater than the average year of all
 artworks
