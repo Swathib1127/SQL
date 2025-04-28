@@ -1,6 +1,5 @@
 create database cases
 use cases;
-]
 
 create table LawEnforcementAgency (
 AgencyID INT PRIMARY KEY,
